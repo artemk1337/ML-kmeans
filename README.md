@@ -1,5 +1,4 @@
 # ML-kmeans
-BEFORE
 ![source](source.png)
-AFTER
+![draw](draw.png)
 ![res](res.png)
