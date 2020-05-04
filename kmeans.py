@@ -101,7 +101,7 @@ class KMeans:
             return 1
 
         fig, ax = plt.subplots(figsize=(10, 10))
-        plt.plot(self.dataSet, '.')
+        plt.plot(self.dataSet[:, 0], self.dataSet[:, 1], '.')
         plt.savefig('source.png', dpi=450)
         plt.show()
 
