@@ -1,6 +1,8 @@
 from numpy import *
 import time
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib
 import numpy as np
 from tqdm import tqdm
 
@@ -21,11 +23,10 @@ class KMeans:
         return sqrt(sum(power(vector2 - vector1, 2)))  # distance
 
     def calculate_dist(self, vec, minDist, minIndex):
-        for j in range(self.k):
-            distance = self.euclDistance(self.centers[j, :], vec)
-            if distance < minDist:
-                minDist = distance
-                minIndex = j
+        tmp = [self.euclDistance(self.centers[j, :], vec) for j in range(self.k)]
+        if min(tmp) < minDist:
+            minDist = min(tmp)
+            minIndex = tmp.index(minDist)
         return minDist, minIndex
 
     # init self.centers with random samples
@@ -50,12 +51,13 @@ class KMeans:
             clusterChanged = False
             minDist = mat(full_like(self.clustersIndexDist[:, 0], np.inf))
             minIndex = mat(zeros_like(self.clustersIndexDist[:, 0]))
+            # update minDist, minIndex
             for i in tqdm(range(len(self.clustersIndexDist))):
                 minDist[i][0], minIndex[i][0] = self.calculate_dist(self.dataSet[i, :], minDist[i], minIndex[i])
             # if clusters changed
             if not array_equal(self.clustersIndexDist[:, 0], minIndex):
                 clusterChanged = True
-                self.clustersIndexDist[:, 0], self.clustersIndexDist[:, 1] = minIndex, minDist
+                self.clustersIndexDist[:, 0], self.clustersIndexDist[:, 1] = minIndex, np.power(minDist, 2)
             tmp = []
             for j in range(self.k):
                 # nonzero(self.clustersIndexDist[:, 0].A == j)[0] - take points for each clusters
@@ -82,21 +84,29 @@ class KMeans:
             print("The dimension of your data is not 2!")
             return 1
 
-        mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr']
-        if self.k > len(mark):
-            print("k is too large! Make 'mark' more")
+        markers = {'D': 'diamond', 's': 'square', '|': 'vline',
+                   'x': 'x', '_': 'hline', ' ': 'nothing', 'd': 'thin_diamond',
+                   'h': 'hexagon1', '+': 'plus', '*': 'star',
+                   ',': 'pixel', 'o': 'circle', '.': 'point',
+                   '1': 'tri_down', 'p': 'pentagon',
+                   '3': 'tri_left', '2': 'tri_up', '4': 'tri_right',
+                   'H': 'hexagon2', 'v': 'triangle_down',
+                   '8': 'octagon', '<': 'triangle_left', '>': 'triangle_right'}
+        colors = list(mcolors.TABLEAU_COLORS.values()) +\
+                 list(mcolors.CSS4_COLORS.values())
+        if self.k > len(list(markers.keys())):
+            print("k is too large! Make 'markers' more")
             return 1
 
         for i in range(self.k):
             markIndex = i
             tmp = np.where(self.clustersIndexDist[:, 0] == i)[0]
             tmp_ = self.dataSet[tmp]
-            plt.plot(tmp_[:, 0], tmp_[:, 1], mark[markIndex], markersize=2)
+            plt.plot(tmp_[:, 0], tmp_[:, 1], list(markers.keys())[markIndex], c=colors[i], markersize=2)
             del tmp, tmp_
 
-        mark = ['Dr', 'Db', 'Dg', 'Dk', '^b', '+b', 'sb', 'db', '<b', 'pb']
         # draw centers
         for i in range(self.k):
-            plt.plot(self.centers[i, 0], self.centers[i, 1], mark[i], markersize=10)
+            plt.plot(self.centers[i, 0], self.centers[i, 1], '^', c=colors[i], markersize=10)
         plt.savefig('res.png', dpi=450)
         plt.show()
