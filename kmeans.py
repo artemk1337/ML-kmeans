@@ -94,7 +94,8 @@ class KMeans:
                    '8': 'octagon', '<': 'triangle_left', '>': 'triangle_right'}
         markers = np.asarray(list(markers.keys()))
         colors = list(mcolors.TABLEAU_COLORS.values()) +\
-                 list(mcolors.CSS4_COLORS.values())
+                 list(mcolors.BASE_COLORS.values())
+        np.random.shuffle(markers)
 
         if self.k > len(markers):
             print("k is too large! Make 'markers' more")
@@ -118,7 +119,6 @@ class KMeans:
             markIndex = i
             tmp = np.where(self.clustersIndexDist[:, 0] == i)[0]
             tmp_ = self.dataSet[tmp]
-            np.random.shuffle(markers)
             plt.plot(tmp_[:, 0], tmp_[:, 1],
                      markers[markIndex],
                      c=colors[i], markersize=6)
