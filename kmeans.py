@@ -6,12 +6,12 @@ from tqdm import tqdm
 
 
 class KMeans:
-    def __init__(self, dataSet=None, k=None, tall=0):
+    def __init__(self, dataSet=None, k=None, tol=0):
         self.dataSet = np.asarray(dataSet)
         self.k = k
         self.centers = None
         self.clustersIndexDist = None
-        self.tall = tall
+        self.tol = tol
         if dataSet is None or k is None:
             print("Dataset or clusters mustn't be NONE!")
             exit(1)
@@ -65,7 +65,8 @@ class KMeans:
                 tmp += [self.euclDistance(self.centers[j, :], mean_)]
                 self.centers[j, :] = mean_  # move centroid to mean values
             print(f"Max shift: {max(tmp)}")
-            if max(tmp) < self.tall:
+            # early break
+            if max(tmp) < self.tol:
                 del tmp
                 break
             del tmp
