@@ -1,8 +1,5 @@
 from kmeans import KMeans
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-import numpy as np
 
 
 data = pd.read_csv('train.csv', delimiter=',')

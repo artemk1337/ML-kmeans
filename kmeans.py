@@ -85,7 +85,7 @@ class KMeans:
             return 1
 
         markers = {'D': 'diamond', 's': 'square', '|': 'vline',
-                   'x': 'x', '_': 'hline', ' ': 'nothing', 'd': 'thin_diamond',
+                   'x': 'x', '_': 'hline', 'd': 'thin_diamond',
                    'h': 'hexagon1', '+': 'plus', '*': 'star',
                    ',': 'pixel', 'o': 'circle', '.': 'point',
                    '1': 'tri_down', 'p': 'pentagon',
@@ -97,16 +97,17 @@ class KMeans:
         if self.k > len(list(markers.keys())):
             print("k is too large! Make 'markers' more")
             return 1
-
+        fig, ax = plt.subplots(figsize=(10,10))
         for i in range(self.k):
             markIndex = i
             tmp = np.where(self.clustersIndexDist[:, 0] == i)[0]
             tmp_ = self.dataSet[tmp]
-            plt.plot(tmp_[:, 0], tmp_[:, 1], list(markers.keys())[markIndex], c=colors[i], markersize=2)
+            plt.plot(tmp_[:, 0], tmp_[:, 1], list(markers.keys())[markIndex],
+                     c=colors[i], markersize=6)
             del tmp, tmp_
 
         # draw centers
         for i in range(self.k):
-            plt.plot(self.centers[i, 0], self.centers[i, 1], '^', c=colors[i], markersize=10)
+            plt.plot(self.centers[i, 0], self.centers[i, 1], '^', c=colors[i], markersize=15)
         plt.savefig('res.png', dpi=450)
         plt.show()
