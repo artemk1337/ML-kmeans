@@ -20,6 +20,14 @@ class KMeans:
     def euclDistance(self, vector1, vector2):
         return sqrt(sum(power(vector2 - vector1, 2)))  # distance
 
+    def calculate_dist(self, vec, minDist, minIndex):
+        for j in range(self.k):
+            distance = self.euclDistance(self.centers[j, :], vec)
+            if distance < minDist:
+                minDist = distance
+                minIndex = j
+        return minDist, minIndex
+
     # init self.centers with random samples
     def initCentroids(self, dataSet, k):
         numSamples, dims = dataSet.shape
@@ -40,23 +48,14 @@ class KMeans:
         # Find best center
         while clusterChanged:
             clusterChanged = False
-            # for each sample
-            for i in tqdm(range(numSamples)):
-                minDist = np.inf
-                minIndex = 0
-                # for each centroid; find the closest centroid
-                for j in range(self.k):
-                    distance = self.euclDistance(self.centers[j, :], self.dataSet[i, :])
-                    if distance < minDist:
-                        minDist = distance
-                        minIndex = j
-                # update cluster
-                # if index changed
-                if self.clustersIndexDist[i, 0] != minIndex:
-                    clusterChanged = True
-                    self.clustersIndexDist[i, :] = minIndex, minDist ** 2
-            # update self.centers
-            # print(self.centers)
+            minDist = mat(full_like(self.clustersIndexDist[:, 0], np.inf))
+            minIndex = mat(zeros_like(self.clustersIndexDist[:, 0]))
+            for i in tqdm(range(len(self.clustersIndexDist))):
+                minDist[i][0], minIndex[i][0] = self.calculate_dist(self.dataSet[i, :], minDist[i], minIndex[i])
+            # if clusters changed
+            if not array_equal(self.clustersIndexDist[:, 0], minIndex):
+                clusterChanged = True
+                self.clustersIndexDist[:, 0], self.clustersIndexDist[:, 1] = minIndex, minDist
             tmp = []
             for j in range(self.k):
                 # nonzero(self.clustersIndexDist[:, 0].A == j)[0] - take points for each clusters
@@ -70,7 +69,6 @@ class KMeans:
                 del tmp
                 break
             del tmp
-            # print(self.centers)
     
         print('Cluster complete!')
         return self.dataSet, self.k, self.centers, self.clustersIndexDist

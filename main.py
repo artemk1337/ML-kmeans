@@ -8,9 +8,9 @@ data = pd.read_csv('train.csv', delimiter=',')
 print(data.columns)
 
 
-kmeans = KMeans(data[['place_latitude', 'place_longitude']], 3)
+kmeans = KMeans(data[['place_latitude', 'place_longitude']], 10)
 arr = kmeans.kmeans()
-print(arr)
+# print(arr)
 kmeans.showClusters()
 
 
