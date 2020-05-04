@@ -5,6 +5,7 @@ import matplotlib.colors as mcolors
 import matplotlib
 import numpy as np
 from tqdm import tqdm
+from random import shuffle
 
 
 class KMeans:
@@ -83,7 +84,6 @@ class KMeans:
         if dim != 2:
             print("The dimension of your data is not 2!")
             return 1
-
         markers = {'D': 'diamond', 's': 'square', '|': 'vline',
                    'x': 'x', '_': 'hline', 'd': 'thin_diamond',
                    'h': 'hexagon1', '+': 'plus', '*': 'star',
@@ -92,22 +92,41 @@ class KMeans:
                    '3': 'tri_left', '2': 'tri_up', '4': 'tri_right',
                    'H': 'hexagon2', 'v': 'triangle_down',
                    '8': 'octagon', '<': 'triangle_left', '>': 'triangle_right'}
+        markers = np.asarray(list(markers.keys()))
         colors = list(mcolors.TABLEAU_COLORS.values()) +\
                  list(mcolors.CSS4_COLORS.values())
-        if self.k > len(list(markers.keys())):
+
+        if self.k > len(markers):
             print("k is too large! Make 'markers' more")
             return 1
-        fig, ax = plt.subplots(figsize=(10,10))
+
+        fig, ax = plt.subplots(figsize=(10, 10))
+        plt.plot(self.dataSet, '.')
+        plt.savefig('source.png', dpi=450)
+        plt.show()
+
+        fig, ax = plt.subplots(figsize=(10, 10))
+        for i in range(self.k):
+            tmp = np.where(self.clustersIndexDist[:, 0] == i)[0]
+            tmp_ = self.dataSet[tmp]
+            plt.plot(tmp_[:, 0], tmp_[:, 1])
+        plt.savefig('draw.png', dpi=450)
+        plt.show()
+
+        fig, ax = plt.subplots(figsize=(10, 10))
         for i in range(self.k):
             markIndex = i
             tmp = np.where(self.clustersIndexDist[:, 0] == i)[0]
             tmp_ = self.dataSet[tmp]
-            plt.plot(tmp_[:, 0], tmp_[:, 1], list(markers.keys())[markIndex],
+            np.random.shuffle(markers)
+            plt.plot(tmp_[:, 0], tmp_[:, 1],
+                     markers[markIndex],
                      c=colors[i], markersize=6)
             del tmp, tmp_
 
         # draw centers
         for i in range(self.k):
-            plt.plot(self.centers[i, 0], self.centers[i, 1], '^', c=colors[i], markersize=15)
+            plt.plot(self.centers[i, 0], self.centers[i, 1],
+                     '^', c=colors[i], markersize=15)
         plt.savefig('res.png', dpi=450)
         plt.show()
