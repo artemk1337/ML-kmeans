@@ -15,6 +15,7 @@ class KMeans:
         self.centers = None
         self.clustersIndexDist = None
         self.tol = tol
+        self.elbow = None
         if dataSet is None or k is None:
             print("Dataset or clusters mustn't be NONE!")
             exit(1)
@@ -53,7 +54,7 @@ class KMeans:
             minDist = mat(full_like(self.clustersIndexDist[:, 0], np.inf))
             minIndex = mat(zeros_like(self.clustersIndexDist[:, 0]))
             # update minDist, minIndex
-            for i in tqdm(range(len(self.clustersIndexDist))):
+            for i in (range(len(self.clustersIndexDist))):
                 minDist[i][0], minIndex[i][0] = self.calculate_dist(self.dataSet[i, :], minDist[i], minIndex[i])
             # if clusters changed
             if not array_equal(self.clustersIndexDist[:, 0], minIndex):
@@ -74,7 +75,9 @@ class KMeans:
             del tmp
     
         print('Cluster complete!')
-        return self.dataSet, self.k, self.centers, self.clustersIndexDist
+        # print(self.clustersIndexDist)
+        self.elbow = np.sum([i**2 for i in self.clustersIndexDist[:, -1]])
+        return self.dataSet, self.elbow
 
     # show clusters only available with 2D data
     # self.centers - self.centers of clusters
@@ -111,7 +114,7 @@ class KMeans:
             tmp = np.where(self.clustersIndexDist[:, 0] == i)[0]
             tmp_ = self.dataSet[tmp]
             plt.plot(tmp_[:, 0], tmp_[:, 1])
-        plt.savefig('draw.png', dpi=450)
+        plt.savefig(f'draw_{self.k}.png', dpi=450)
         plt.show()
 
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -128,5 +131,5 @@ class KMeans:
         for i in range(self.k):
             plt.plot(self.centers[i, 0], self.centers[i, 1],
                      '^', c=colors[i], markersize=15)
-        plt.savefig('res.png', dpi=450)
+        plt.savefig(f'res_{self.k}.png', dpi=450)
         plt.show()
