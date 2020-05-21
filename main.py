@@ -23,5 +23,3 @@ for k in range(2, 10):
 plt.plot(x, kmeans_elbow_dist)
 plt.savefig('elbow_graph.png', dpi=450)
 plt.show()
-
-

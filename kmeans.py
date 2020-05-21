@@ -89,8 +89,8 @@ class KMeans:
             return 1
         markers = {'D': 'diamond', 's': 'square', '|': 'vline',
                    'x': 'x', '_': 'hline', 'd': 'thin_diamond',
-                   'h': 'hexagon1', '+': 'plus', '*': 'star',
-                   ',': 'pixel', 'o': 'circle', '.': 'point',
+                   '+': 'plus', '*': 'star', ',': 'pixel',
+                   'o': 'circle', '.': 'point',
                    '1': 'tri_down', 'p': 'pentagon',
                    '3': 'tri_left', '2': 'tri_up', '4': 'tri_right',
                    'H': 'hexagon2', 'v': 'triangle_down',
